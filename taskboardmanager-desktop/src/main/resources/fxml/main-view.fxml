@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.takoyaki.taskboardmanager.desktop.view.BoardCanvas?>
+<?import org.takoyaki.taskboardmanager.desktop.view.HierarchyView?>
+<?import org.takoyaki.taskboardmanager.desktop.view.OutlineView?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+ fx:controller="org.takoyaki.taskboardmanager.desktop.controller.MainController" styleClass="app-root">
+ <top><VBox>
+  <HBox alignment="CENTER_LEFT" spacing="12" styleClass="title-bar"><padding><Insets top="10" right="16" bottom="10" left="16"/></padding>
+   <Label text="TaskBoardManager" styleClass="app-title"/><Label fx:id="currentFileLabel" text="未保存" styleClass="app-subtitle"/>
+   <Region HBox.hgrow="ALWAYS"/><Label fx:id="modifiedLabel" text="保存済み" styleClass="modified-badge"/>
+  </HBox>
+  <MenuBar styleClass="menu-bar"><menus>
+   <Menu text="ファイル"><items><MenuItem fx:id="newMenuItem" text="新規" onAction="#handleNew"/><MenuItem fx:id="openMenuItem" text="開く…" onAction="#handleOpen"/><SeparatorMenuItem/><MenuItem fx:id="saveMenuItem" text="保存" onAction="#handleSave"/><MenuItem fx:id="saveAsMenuItem" text="名前を付けて保存…" onAction="#handleSaveAs"/></items></Menu>
+   <Menu text="編集"><items><MenuItem text="元に戻す" onAction="#handleUndo"/><MenuItem text="やり直す" onAction="#handleRedo"/><SeparatorMenuItem/><MenuItem text="切り取り" onAction="#handleCut"/><MenuItem text="コピー" onAction="#handleCopy"/><MenuItem text="貼り付け" onAction="#handlePaste"/><MenuItem text="すべて選択" onAction="#handleSelectAll"/><MenuItem text="削除" onAction="#handleDelete"/></items></Menu>
+   <Menu text="表示"><items><MenuItem text="ズームをリセット" onAction="#handleResetZoom"/><MenuItem text="全体を表示" onAction="#handleShowAll"/><MenuItem text="選択要素へフォーカス" onAction="#handleFocusSelection"/><SeparatorMenuItem/><MenuItem text="階層レイアウトを自由配置へ反映" onAction="#handleApplyLayout"/></items></Menu>
+  </menus></MenuBar>
+  <HBox alignment="CENTER_LEFT" spacing="7" styleClass="tool-bar"><padding><Insets top="8" right="14" bottom="8" left="14"/></padding>
+   <Button text="＋ ノード" onAction="#handleAddNode"/><Button text="□ ボックス" onAction="#handleAddBox"/><Button text="↗ 接続" onAction="#handleConnectionHint"/><Separator orientation="VERTICAL"/>
+   <ToggleButton fx:id="freeboardButton" text="フリーボード" onAction="#handleFreeboardMode" selected="true"/><ToggleButton fx:id="hierarchyButton" text="横向きツリー" onAction="#handleHierarchyMode"/><ToggleButton fx:id="outlineButton" text="階層リスト" onAction="#handleOutlineMode"/>
+   <Button text="配置へ反映" onAction="#handleApplyLayout" styleClass="ghost-button"/><Region HBox.hgrow="ALWAYS"/>
+   <TextField fx:id="searchField" promptText="ノードを検索" onAction="#handleSearch" prefWidth="180"/><Button text="検索" onAction="#handleSearch" styleClass="accent-button"/><Button text="保存" onAction="#handleSave" styleClass="accent-button"/>
+  </HBox>
+ </VBox></top>
+ <center><StackPane><BoardCanvas fx:id="boardCanvas"/><HierarchyView fx:id="hierarchyView" visible="false" managed="false"/><OutlineView fx:id="outlineView" visible="false" managed="false"/></StackPane></center>
+ <right><ScrollPane fitToWidth="true" prefWidth="350" hbarPolicy="NEVER" styleClass="inspector-scroll"><content><VBox spacing="8" styleClass="inspector"><padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+  <Label text="インスペクター" styleClass="panel-title"/><Separator/><Label text="ボード名" styleClass="field-caption"/><TextField fx:id="boardTitleField" onAction="#handleBoardRename"/><Label fx:id="documentStatsLabel" text="0要素 / 0接続" styleClass="field-value"/>
+  <Separator/><Label text="検索・フィルター" styleClass="field-caption"/>
+  <GridPane hgap="6" vgap="6"><ComboBox fx:id="filterNodeType" promptText="種類: すべて" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="filterTaskStatus" promptText="タスク状態" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/><ComboBox fx:id="filterPriority" promptText="優先度" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"/><ComboBox fx:id="filterQuestionStatus" promptText="疑問状態" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/></GridPane>
+  <HBox spacing="6"><Button text="適用" onAction="#handleSearch"/><Button text="条件クリア" onAction="#handleClearFilters"/></HBox><ListView fx:id="searchResultsList" prefHeight="118"/>
+  <Separator/><Label text="選択対象" styleClass="field-caption"/><Label fx:id="selectionTypeLabel" text="未選択" styleClass="field-value-strong"/><Label text="ID" styleClass="field-caption"/><Label fx:id="elementIdLabel" text="—" wrapText="true" styleClass="id-value"/>
+  <Label text="タイトル" styleClass="field-caption"/><TextField fx:id="elementTitleField" onAction="#handleApplyProperties"/>
+  <GridPane hgap="8" vgap="5"><Label text="X" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-caption"/><TextField fx:id="xField" onAction="#handleApplyProperties" GridPane.columnIndex="0" GridPane.rowIndex="1"/><Label text="Y" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="field-caption"/><TextField fx:id="yField" onAction="#handleApplyProperties" GridPane.columnIndex="1" GridPane.rowIndex="1"/><Label text="幅" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-caption"/><TextField fx:id="widthField" onAction="#handleApplyProperties" GridPane.columnIndex="0" GridPane.rowIndex="3"/><Label text="高さ" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="field-caption"/><TextField fx:id="heightField" onAction="#handleApplyProperties" GridPane.columnIndex="1" GridPane.rowIndex="3"/></GridPane>
+  <VBox fx:id="nodeDetailsPane" spacing="6"><Label text="ノード種類" styleClass="field-caption"/><ComboBox fx:id="nodeTypeCombo" maxWidth="Infinity"/><Label text="説明" styleClass="field-caption"/><TextArea fx:id="descriptionArea" prefRowCount="2" wrapText="true"/>
+   <VBox fx:id="taskPane" spacing="5"><Label text="タスク" styleClass="field-caption"/><HBox spacing="6"><ComboBox fx:id="taskStatusCombo" prefWidth="140"/><ComboBox fx:id="priorityCombo" prefWidth="140"/></HBox><HBox spacing="6"><ComboBox fx:id="progressModeCombo" prefWidth="170"/><TextField fx:id="progressField" promptText="進捗 0〜100" prefWidth="110"/></HBox><HBox spacing="6"><DatePicker fx:id="startDatePicker" promptText="開始日"/><DatePicker fx:id="dueDatePicker" promptText="期限日"/></HBox></VBox>
+   <VBox fx:id="questionPane" spacing="5"><Label text="疑問" styleClass="field-caption"/><ComboBox fx:id="questionStatusCombo"/><TextArea fx:id="resolutionArea" promptText="解決内容" prefRowCount="2" wrapText="true"/></VBox>
+   <VBox fx:id="ideaPane" spacing="5"><Label text="アイデア" styleClass="field-caption"/><ComboBox fx:id="ideaStatusCombo"/></VBox>
+   <VBox fx:id="decisionPane" spacing="5"><Label text="決定事項" styleClass="field-caption"/><TextArea fx:id="decisionArea" promptText="決定内容" prefRowCount="2" wrapText="true"/><TextArea fx:id="rationaleArea" promptText="理由" prefRowCount="2" wrapText="true"/><DatePicker fx:id="decidedDatePicker" promptText="決定日"/></VBox>
+  </VBox>
+  <VBox fx:id="connectionPane" spacing="5"><Label text="接続" styleClass="field-caption"/><Label fx:id="connectionLabel" text="—" wrapText="true" styleClass="field-value"/><ComboBox fx:id="relationTypeCombo" maxWidth="Infinity"/></VBox>
+  <HBox spacing="8"><Button text="適用" onAction="#handleApplyProperties" styleClass="accent-button"/><Button text="削除" onAction="#handleDelete" styleClass="danger-button"/></HBox><Separator/><Label text="Ctrl＋クリック: 選択追加 / Space＋ドラッグ: パン" wrapText="true" styleClass="shortcut-hint"/>
+ </VBox></content></ScrollPane></right>
+ <bottom><HBox alignment="CENTER_LEFT" spacing="14" styleClass="status-bar"><padding><Insets top="7" right="14" bottom="7" left="14"/></padding><Label fx:id="statusLabel" text="選択ツール"/><Region HBox.hgrow="ALWAYS"/><Label fx:id="selectionCountLabel" text="選択: 0" styleClass="status-muted"/><Label text="ズーム" styleClass="status-muted"/><Label fx:id="zoomLabel" text="100%"/></HBox></bottom>
+</BorderPane>
